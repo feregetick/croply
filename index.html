@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Croply — Обрезка изображений</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Croply</div>
+    <div class="subtitle">Простая обрезка изображений</div>
+</header>
+
+<main>
+
+    <section id="uploadBox" class="upload-box">
+        <div class="upload-icon">✂</div>
+        <h1>Обрежьте изображение</h1>
+        <p>Выберите изображение с компьютера</p>
+
+        <label class="upload-button">
+            Выбрать изображение
+            <input type="file" id="fileInput" accept="image/*">
+        </label>
+    </section>
+
+    <section id="editor" class="editor hidden">
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="controls">
+
+            <div class="formats">
+                <button data-ratio="free" class="active">Свободно</button>
+                <button data-ratio="1">1:1</button>
+                <button data-ratio="1.3333">4:3</button>
+                <button data-ratio="1.7777">16:9</button>
+                <button data-ratio="0.5625">9:16</button>
+            </div>
+
+            <button id="cropButton" class="crop-button">
+                Обрезать
+            </button>
+
+            <button id="downloadButton" class="download-button hidden">
+                Скачать изображение
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    Croply © 2026
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
