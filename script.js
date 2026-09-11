@@ -845,6 +845,114 @@ formatButtons.forEach(button => {
 
 
 // ===============================
+// ROTATE & FLIP
+// ===============================
+
+const rotateLeftButton = document.getElementById("rotateLeftButton");
+const rotateRightButton = document.getElementById("rotateRightButton");
+const flipHorizontalButton = document.getElementById("flipHorizontalButton");
+const flipVerticalButton = document.getElementById("flipVerticalButton");
+
+
+function loadTransformedImage(dataUrl) {
+
+    const newImage = new Image();
+
+    newImage.onload = function () {
+
+        image = newImage;
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        // Пересчитываем область обрезки под новый размер картинки
+        crop.width = Math.min(crop.width, canvas.width);
+        crop.height = Math.min(crop.height, canvas.height);
+
+        crop.x = (canvas.width - crop.width) / 2;
+        crop.y = (canvas.height - crop.height) / 2;
+
+        draw();
+    };
+
+    newImage.src = dataUrl;
+}
+
+
+function rotateImage(degrees) {
+
+    const radians = degrees * Math.PI / 180;
+
+    const swap = degrees % 180 !== 0;
+
+    const w = image.width;
+    const h = image.height;
+
+    const newWidth = swap ? h : w;
+    const newHeight = swap ? w : h;
+
+    const offCanvas = document.createElement("canvas");
+
+    offCanvas.width = newWidth;
+    offCanvas.height = newHeight;
+
+    const offCtx = offCanvas.getContext("2d");
+
+    offCtx.translate(newWidth / 2, newHeight / 2);
+    offCtx.rotate(radians);
+    offCtx.drawImage(image, -w / 2, -h / 2);
+
+    loadTransformedImage(offCanvas.toDataURL("image/png"));
+}
+
+
+function flipImage(direction) {
+
+    const w = image.width;
+    const h = image.height;
+
+    const offCanvas = document.createElement("canvas");
+
+    offCanvas.width = w;
+    offCanvas.height = h;
+
+    const offCtx = offCanvas.getContext("2d");
+
+    if (direction === "horizontal") {
+
+        offCtx.translate(w, 0);
+        offCtx.scale(-1, 1);
+
+    } else {
+
+        offCtx.translate(0, h);
+        offCtx.scale(1, -1);
+    }
+
+    offCtx.drawImage(image, 0, 0);
+
+    loadTransformedImage(offCanvas.toDataURL("image/png"));
+}
+
+
+rotateLeftButton.addEventListener("click", function () {
+    rotateImage(-90);
+});
+
+rotateRightButton.addEventListener("click", function () {
+    rotateImage(90);
+});
+
+flipHorizontalButton.addEventListener("click", function () {
+    flipImage("horizontal");
+});
+
+flipVerticalButton.addEventListener("click", function () {
+    flipImage("vertical");
+});
+
+
+// ===============================
 // CROP
 // ===============================
 
