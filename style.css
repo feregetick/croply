@@ -132,6 +132,33 @@ canvas {
     color: white;
 }
 
+.transforms {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.transforms button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    touch-action: manipulation;
+    transition: background 0.15s;
+}
+
+.transforms button:hover {
+    background: #f0f0f0;
+}
+
+.transforms button:active {
+    background: #111;
+    color: white;
+}
+
 .crop-button,
 .download-button {
     width: 100%;
@@ -218,6 +245,15 @@ footer {
         flex: 1 1 calc(33.333% - 6px);
         padding: 12px 5px;
         font-size: 14px;
+    }
+
+    .transforms {
+        gap: 6px;
+    }
+
+    .transforms button {
+        padding: 10px 5px;
+        font-size: 18px;
     }
 
     .crop-button,
