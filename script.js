@@ -556,6 +556,209 @@ canvas.addEventListener("mousemove", function (event) {
 
 });
 
+// ===============================
+// TOUCH SUPPORT
+// ===============================
+
+function getTouchPosition(event) {
+
+    const touch = event.touches[0];
+
+    const rect = canvas.getBoundingClientRect();
+
+    return {
+        x: (touch.clientX - rect.left) *
+            (canvas.width / rect.width),
+
+        y: (touch.clientY - rect.top) *
+            (canvas.height / rect.height)
+    };
+}
+
+
+canvas.addEventListener("touchstart", function (event) {
+
+    event.preventDefault();
+
+    const touch = getTouchPosition(event);
+
+    const direction =
+        getResizeDirection(touch.x, touch.y);
+
+    startMouse = touch;
+
+    startCrop = {
+        x: crop.x,
+        y: crop.y,
+        width: crop.width,
+        height: crop.height
+    };
+
+    if (direction) {
+
+        resizing = true;
+        dragging = false;
+
+        resizeDirection = direction;
+
+    } else if (
+        touch.x >= crop.x &&
+        touch.x <= crop.x + crop.width &&
+        touch.y >= crop.y &&
+        touch.y <= crop.y + crop.height
+    ) {
+
+        dragging = true;
+        resizing = false;
+    }
+
+}, { passive: false });
+
+
+canvas.addEventListener("touchmove", function (event) {
+
+    event.preventDefault();
+
+    if (!dragging && !resizing) return;
+
+    const touch = getTouchPosition(event);
+
+    const dx = touch.x - startMouse.x;
+    const dy = touch.y - startMouse.y;
+
+    // ===========================
+    // MOVE CROP
+    // ===========================
+
+    if (dragging) {
+
+        crop.x = startCrop.x + dx;
+        crop.y = startCrop.y + dy;
+
+        crop.x = Math.max(
+            0,
+            Math.min(
+                crop.x,
+                canvas.width - crop.width
+            )
+        );
+
+        crop.y = Math.max(
+            0,
+            Math.min(
+                crop.y,
+                canvas.height - crop.height
+            )
+        );
+
+        draw();
+
+        return;
+    }
+
+
+    // ===========================
+    // RESIZE
+    // ===========================
+
+    if (resizing) {
+
+        let newX = startCrop.x;
+        let newY = startCrop.y;
+
+        let newWidth = startCrop.width;
+        let newHeight = startCrop.height;
+
+
+        if (resizeDirection.includes("left")) {
+
+            newX = startCrop.x + dx;
+            newWidth = startCrop.width - dx;
+
+            if (newX < 0) {
+                newWidth += newX;
+                newX = 0;
+            }
+        }
+
+
+        if (resizeDirection.includes("right")) {
+
+            newWidth = startCrop.width + dx;
+
+            if (newX + newWidth > canvas.width) {
+                newWidth = canvas.width - newX;
+            }
+        }
+
+
+        if (resizeDirection.includes("top")) {
+
+            newY = startCrop.y + dy;
+            newHeight = startCrop.height - dy;
+
+            if (newY < 0) {
+                newHeight += newY;
+                newY = 0;
+            }
+        }
+
+
+        if (resizeDirection.includes("bottom")) {
+
+            newHeight = startCrop.height + dy;
+
+            if (newY + newHeight > canvas.height) {
+                newHeight = canvas.height - newY;
+            }
+        }
+
+
+        if (newWidth < 30) {
+
+            newWidth = 30;
+
+            if (resizeDirection.includes("left")) {
+                newX =
+                    startCrop.x +
+                    startCrop.width -
+                    30;
+            }
+        }
+
+
+        if (newHeight < 30) {
+
+            newHeight = 30;
+
+            if (resizeDirection.includes("top")) {
+                newY =
+                    startCrop.y +
+                    startCrop.height -
+                    30;
+            }
+        }
+
+
+        crop.x = newX;
+        crop.y = newY;
+        crop.width = newWidth;
+        crop.height = newHeight;
+
+        draw();
+    }
+
+}, { passive: false });
+
+
+canvas.addEventListener("touchend", function () {
+
+    dragging = false;
+    resizing = false;
+    resizeDirection = "";
+
+});
+
 
 // ===============================
 // MOUSE UP
